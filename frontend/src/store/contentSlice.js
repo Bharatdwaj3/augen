@@ -56,7 +56,6 @@ const contentSlice = createSlice({
 export const { 
   markAsVisited,
   clearHistory,
-
   toggleBookmark, 
   setCategory, 
   setSearchQuery, 

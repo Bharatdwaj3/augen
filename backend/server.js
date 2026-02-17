@@ -16,20 +16,23 @@ import morganConfig from "./src/config/morgan.config.js";
 const app = express();
 
 connectDB();
+
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: "8kb" }));
 app.use(cookieParser());
 
 app.use(morganConfig);
 
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-  })
-);
+
 
 app.get("/", (req, res) => res.send("Server ready"));
 
@@ -39,4 +42,4 @@ app.use("/api/user/writer", writerRoutes);
 app.use("/api/content", contentRoutes);
 
 app.use(dbMiddleware);
-app.listen(PORT, () => console.log("Server Started at port : ", PORT));
+app.listen(PORT, '0.0.0.0',() => console.log("Server Started at port : ", PORT));
