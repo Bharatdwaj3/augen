@@ -1,7 +1,5 @@
 <h1 align="center"> Augen:  The Media Site </h1>
 
-<p align="center"> The Intelligent Documentation Engine for Transforming Complex Codebases into Professional, Human-Readable Assets </p>
-
 <p align="center">
   <img alt="Build" src="https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge">
   <img alt="Issues" src="https://img.shields.io/badge/Issues-0%20Open-blue?style=for-the-badge">
