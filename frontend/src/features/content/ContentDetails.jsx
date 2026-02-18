@@ -120,7 +120,7 @@ const ContentDetails = () => {
 
             <div className="flex gap-3 mt-6">
               <button
-                onClick={toggleBookmark}
+                onClick={toggleBookmarkItem}
                 className={`
       flex items-center gap-2 px-5 py-2.5 rounded-lg border text-sm font-medium transition-all
       ${

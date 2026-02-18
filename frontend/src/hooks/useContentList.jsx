@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import api from '../util/api';
 
 export function useContentList(ids, enabled = true) {
   const [stories, setStories] = useState([]);
   const [fetching, setFetching] = useState(false);
 
+  const stableIds = useMemo(() => ids, [JSON.stringify(ids)]);
   useEffect(() => {
-    if (!enabled || ids.length === 0) {
+    if (!enabled || stableIds.length === 0) {
       setStories([]);
       return;
     }
@@ -15,7 +16,7 @@ export function useContentList(ids, enabled = true) {
       setFetching(true);
       try {
         const results = await Promise.all(
-          ids.map(id =>
+          stableIds.map(id =>
             api.get(`/content/${id}`).then(res => res.data).catch(() => null)
           )
         );
@@ -29,7 +30,7 @@ export function useContentList(ids, enabled = true) {
     };
 
     fetchAll();
-  }, [ids, enabled]);
+  }, [stableIds, enabled]);
 
   return { stories, fetching };
 }
