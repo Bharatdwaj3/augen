@@ -1,7 +1,7 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
@@ -17,42 +17,23 @@ import { useSelector, useDispatch } from "react-redux";
 import { toggleBookmark, markAsVisited } from "../../store/contentSlice";
 import { toggleFollow } from "../../store/followSlice";
 
+import { useContentDetail } from "../../hooks/useContentDetail";
+import { useBookmark } from "../../hooks/useBookMark";
+
+
+import { calculateReadTime } from "../../helpers/contentHelpers";
+
 const ContentDetails = () => {
-  const { id } = useParams();
   const navigate = useNavigate();
-  const [content, setContent] = useState(null);
-  const [loading, setLoading] = useState(true);
-
   const dispatch = useDispatch();
-  const bookmarks = useSelector((state) => state.content.bookmarks);
-  const isBookmarked = bookmarks.includes(id);
+  
+  const {content, loading, id}=useContentDetail();
+  const {isBookmarked, toggle:toggleBookmarkItem}=useBookmark(id);
   const isFollowing = useSelector((state) =>
-  content?.author?._id ? state.follow.following.includes(content.author._id) : false
-);
-
-  useEffect(() => {
-    const fetchContent = async () => {
-      try {
-        const res = await axios.get(`http://localhost:5001/api/content/${id}`, {
-          withCredentials: true,
-        });
-        setContent(res.data);
-        setLoading(false);
-        dispatch(markAsVisited(id));
-      } catch (err) {
-        console.error(err);
-        navigate("/content", { replace: true });
-      }
-    };
-    fetchContent();
-  }, [id, navigate, dispatch]);
-
-  const calculateReadTime = (description) => {
-    if (!description) return "3 min";
-    const words = description.split(" ").length;
-    const minutes = Math.ceil(words / 200);
-    return `${minutes} min read`;
-  };
+    content?.author?._id 
+    ? state.follow.following.includes(content.author._id) 
+    : false
+  );
 
   if (loading) {
     return (
@@ -139,7 +120,7 @@ const ContentDetails = () => {
 
             <div className="flex gap-3 mt-6">
               <button
-                onClick={() => dispatch(toggleBookmark(id))}
+                onClick={toggleBookmark}
                 className={`
       flex items-center gap-2 px-5 py-2.5 rounded-lg border text-sm font-medium transition-all
       ${

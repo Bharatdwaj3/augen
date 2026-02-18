@@ -1,38 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate, Link } from 'react-router-dom';
+/* eslint-disable no-unused-vars */
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { Search, Menu, X, User, LogOut, FileText, PenTool } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { fetchUser, clearUser } from '../store/avatarSlice';
-import api from '../util/api';
+
+import { useNavbar } from '../hooks/useNavbar';
 
 const Navbar = () => {
-  const dispatch = useDispatch();
-  const { user, loading } = useSelector(state => state.avatar);
-  const navigate = useNavigate();
-
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-
-  useEffect(() => {
-    if (localStorage.getItem('accessToken') || document.cookie.includes('accessToken')) {
-      dispatch(fetchUser());
-    }
-  }, [dispatch]);
-
-  const handleLogout = async () => {
-    try {
-      await api.post('/user/logout');
-      dispatch(clearUser());
-      setIsMenuOpen(false);
-      navigate('/login');
-    } catch (err) {
-      console.error('Logout failed:', err);
-    }
-  };
-
-  const getInitial = (name) => name ? name[0].toUpperCase() : 'U';
+  const {
+    user,
+    loading,
+    isMenuOpen,
+    isSearchOpen,
+    searchQuery,
+    setSearchQuery,
+    handleLogout,
+    getInitial,
+    closeMenu,
+    toggleMenu,
+    toggleSearch,
+    closeSearch,
+  } = useNavbar();
 
   if (loading) {
     return (
@@ -78,7 +66,7 @@ const Navbar = () => {
 
        
             <button
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              onClick={toggleSearch}
               className="sm:hidden p-2 hover:bg-foreground/5 rounded-lg transition-colors"
             >
               <Search size={20} className="text-foreground/60" />
@@ -88,10 +76,10 @@ const Navbar = () => {
             {user ? (
               <div className="relative">
                 <button
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  onClick={toggleMenu}
                   className="flex items-center gap-3 p-1.5 pr-4 rounded-xl hover:bg-foreground/5 transition-colors"
                 >
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center ring-2 ring-background font-bold text-sm text-primary">
+                  <div className="w-9 h-9 rounded-full bg-linear-to-br from-primary/20 to-secondary/20 flex items-center justify-center ring-2 ring-background font-bold text-sm text-primary">
                     {user.avatar ? (
                       <img 
                         src={user.avatar} 
@@ -113,7 +101,7 @@ const Navbar = () => {
                     <>
                       <div 
                         className="fixed inset-0 z-40"
-                        onClick={() => setIsMenuOpen(false)}
+                        onClick={closeMenu}
                       />
                       <motion.div
                         initial={{ opacity: 0, y: -10 }}
@@ -121,7 +109,7 @@ const Navbar = () => {
                         exit={{ opacity: 0, y: -10 }}
                         className="absolute right-0 mt-2 w-56 bg-card border border-border rounded-xl shadow-xl overflow-hidden z-50"
                       >
-                        <div className="px-4 py-3 border-b border-border bg-foreground/[0.02]">
+                        <div className="px-4 py-3 border-b border-border bg-foreground/2">
                           <p className="font-semibold text-foreground text-sm">{user.fullName || user.userName}</p>
                           <p className="text-xs text-foreground/50">@{user.userName}</p>
                         </div>
@@ -130,7 +118,7 @@ const Navbar = () => {
                         <div className="py-2">
                           <Link
                             to={`/${user.accountType}`}
-                            onClick={() => setIsMenuOpen(false)}
+                            onClick={closeMenu}
                             className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground/70 hover:bg-foreground/5 hover:text-primary transition-colors"
                           >
                             <User size={16} />
@@ -139,16 +127,16 @@ const Navbar = () => {
                           
                           <Link
                             to="/writer/new"
-                            onClick={() => setIsMenuOpen(false)}
+                            onClick={closeMenu}
                             className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground/70 hover:bg-foreground/5 hover:text-primary transition-colors md:hidden"
                           >
                             <PenTool size={16} />
-                            Write Story
+                            Writer Story
                           </Link>
                           
                           <Link
                             to="/explore"
-                            onClick={() => setIsMenuOpen(false)}
+                            onClick={closeMenu}
                             className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground/70 hover:bg-foreground/5 hover:text-primary transition-colors"
                           >
                             <FileText size={16} />
@@ -189,7 +177,7 @@ const Navbar = () => {
 
            
             <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              onClick={toggleMenu}
               className="md:hidden p-2 hover:bg-foreground/5 rounded-lg transition-colors"
             >
               {isMenuOpen ? (
@@ -217,11 +205,11 @@ const Navbar = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search stories..."
-                  className="bg-transparent text-sm text-foreground placeholder:text-foreground/40 focus:outline-none flex-grow"
+                  className="bg-transparent text-sm text-foreground placeholder:text-foreground/40 focus:outline-none grow"
                   autoFocus
                 />
                 <button
-                  onClick={() => setIsSearchOpen(false)}
+                  onClick={closeSearch}
                   className="p-1 hover:bg-foreground/5 rounded transition-colors"
                 >
                   <X size={16} className="text-foreground/40" />
@@ -242,7 +230,7 @@ const Navbar = () => {
             >
               <Link
                 to="/explore"
-                onClick={() => setIsMenuOpen(false)}
+                onClick={closeMenu}
                 className="block px-4 py-3 text-sm font-semibold text-foreground/70 hover:bg-foreground/5 hover:text-primary transition-colors rounded-lg"
               >
                 Explore

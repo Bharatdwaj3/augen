@@ -18,118 +18,35 @@ import {
 import { motion } from "framer-motion";
 import api from "../../util/api";
 
+import { useProfile } from "../../hooks/useProfile";
+import { useBookmark } from './../../hooks/useBookMark';
+import { useContentList } from './../../hooks/useContentList';
+
 const ReaderProfile = () => {
-  const { user } = useSelector((state) => state.avatar);
-  const [reader, setReader] = useState(null);
-  const [loading, setLoading] = useState(true);
+  
   const [tab, setTab] = useState(0);
 
-  const [savedStories, setSavedStories] = useState([]);
-  const [visitedStories, setVisitedStories] = useState([]);
-
-  const [fetching, setFetching] = useState(false);
-
-  const bookmarks = useSelector((state) => state.content.bookmarks);
-  const visitedArticles = useSelector((state) => state.content.visitedArticles);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchReader = async () => {
-      try {
-        if (user) {
-          setReader(user);
-          setLoading(false);
-          return;
-        }
-        const { data } = await api.get("/user/reader/");
-        setReader(data);
-        setLoading(false);
-      } catch (e) {
-        console.error(e);
-        setLoading(false);
-      }
-    };
-    fetchReader();
-  }, [user]);
+  const {profile: reader, loading}=useProfile('/user/reader');
+  const visitedArticles = useSelector((state) => state.content.visitedArticles);
+  const {bookmarks}=useBookmark(null);
+  const {stories:savedStories}=useContentList(bookmarks);
+  const {stories:visitedStories}=useContentList(
+    visitedArticles.slice(0, 50),
+    tab==1
+  )
+  
 
-  useEffect(() => {
-    const fetchSavedStories = async () => {
-      if (bookmarks.length === 0) {
-        setSavedStories([]);
-        return;
-      }
 
-      setFetching(true);
-
-      try {
-        const fetchedStories = [];
-
-        for (const id of bookmarks) {
-          try {
-            const res = await api.get(`/content/${id}`);
-            fetchedStories.push(res.data);
-          } catch (err) {
-            console.log(`Couldn't fetch content ${id}`, err);
-          }
-        }
-
-        setSavedStories(fetchedStories);
-      } catch (err) {
-        console.error(err);
-        setSavedStories([]);
-      } finally {
-        setFetching(false);
-      }
-    };
-
-    fetchSavedStories();
-  }, [bookmarks]);
-
-  useEffect(() => {
-    const fetchVisitedStories = async () => {
-      if (visitedArticles.length === 0) {
-        setVisitedStories([]);
-        return;
-      }
-
-      setFetching(true);
-      try {
-        const fetchedStories = [];
-        const recentVisits = visitedArticles.slice(0, 50);
-
-        for (const id of recentVisits) {
-          try {
-            const res = await api.get(`content/${id}`);
-            fetchedStories.push({
-              ...res.data,
-              visitedAt: visitedArticles.indexOf(id),
-            });
-          } catch (err) {
-            console.log(`Couldn't fetch visited content ${id}`, err);
-          }
-        }
-        setVisitedStories(fetchedStories);
-      } catch (err) {
-        console.error(err);
-        setVisitedStories([]);
-      } finally {
-        setFetching(false);
-      }
-    };
-
-    if (tab === 1) {
-      fetchVisitedStories();
-    }
-  }, [visitedArticles, tab]);
 
   const handleClearHistory = () => {
     if (
       window.confirm("Are you sure you want to clear your browsing history?")
     ) {
       dispatch(clearHistory());
-      setVisitedStories([]);
     }
   };
 
@@ -233,7 +150,7 @@ const ReaderProfile = () => {
                         <div className="flex items-center gap-4 flex-1 min-w-0">
                           <Bookmark
                             size={24}
-                            className="text-primary flex-shrink-0"
+                            className="text-primary shrink-0"
                             fill="currentColor"
                           />
                           <div className="min-w-0">

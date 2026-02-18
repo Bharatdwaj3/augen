@@ -1,33 +1,27 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Lock, Eye, EyeOff, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import api from '../util/api';
 
+import { useAuthForm } from '../hooks/useAuthForm';
+
 export default function Signup() {
-  const [formData, setFormData] = useState({
-    userName: '', fullName: '', email: '', accountType: 'reader', password: '', confirmPassword: '',
-  });
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (formData.password !== formData.confirmPassword) return setError('Passwords do not match');
-    setLoading(true);
-    try {
+  const { formData, error, loading, handleChange, handleSubmit, setError } = useAuthForm(
+    { userName: '', fullName: '', email: '', accountType: 'reader', password: '', confirmPassword: '' },
+    async (formData) => {
+      
+      if (formData.password !== formData.confirmPassword) {
+        throw new Error('Passwords do not match');
+      }
       await api.post('/user/register', formData);
-      navigate('/login', { state: { message: 'Success' } });
-    } catch (err) {
-      setError('Registration failed');
-      setLoading(false);
+      navigate('/login', { state: { message: 'Account created! Please log in.' } });
     }
-  };
-
+  );
   return (
   
     <div className="min-h-screen w-full flex items-center justify-center bg-background p-4 md:p-6 pt-24 overflow-y-auto">
@@ -35,7 +29,7 @@ export default function Signup() {
       <motion.div 
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="flex flex-col md:flex-row w-full max-w-4xl min-h-[550px] md:h-[min(650px,75vh)] rounded-3xl overflow-hidden shadow-2xl border border-border bg-card"
+        className="flex flex-col md:flex-row w-full max-w-4xl min-h-137.5 md:h-[min(650px,75vh)] rounded-3xl overflow-hidden shadow-2xl border border-border bg-card"
       >
         
        
@@ -48,7 +42,7 @@ export default function Signup() {
           <h1 className="text-4xl md:text-5xl font-black tracking-tighter mb-3 leading-none">Sign<br/>Up</h1>
           <div className="w-10 h-1 bg-foreground mb-6" />
           
-          <p className="text-[13px] font-light opacity-80 leading-relaxed max-w-[200px]">
+          <p className="text-[13px] font-light opacity-80 leading-relaxed max-w-50">
             Step into an unfiltered reality. Share your vision.
           </p>
 
@@ -66,7 +60,7 @@ export default function Signup() {
             <Link to="/login" className="px-4 py-1 rounded-full text-[8px] font-bold tracking-widest text-foreground/40 hover:text-foreground">LOGIN</Link>
           </div>
 
-          <div className="flex-grow overflow-y-auto pr-1 custom-scrollbar flex flex-col justify-center">
+          <div className="grow overflow-y-auto pr-1 custom-scrollbar flex flex-col justify-center">
             <form onSubmit={handleSubmit} className="space-y-4 max-w-sm w-full">
               {error && <p className="text-primary text-[9px] font-bold uppercase tracking-widest">{error}</p>}
               

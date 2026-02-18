@@ -15,38 +15,20 @@ import {
 import { motion } from "framer-motion";
 import api from "../../util/api";
 
+import { useProfile } from './../../hooks/useProfile';
+
 const ContentTab = lazy(() => import("../content/ContentTab.jsx"));
 
 const WriterProfile = () => {
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.avatar);
-  const [writer, setWriter] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState(0);
   const [contentCount, setContentCount] = useState(0);
+
+  const {profile: writer, loading, user}=useProfile('/user/profile');
 
   const followers = useSelector((state) => state.follow.following);
   const following = useSelector((state) => state.follow.following);
 
-  useEffect(() => {
-    const fetchWriter = async () => {
-      try {
-        setLoading(true);
-        if (user) {
-          setWriter(user);
-          setLoading(false);
-          return;
-        }
-        const { data } = await api.get("/user/profile");
-        setWriter(data);
-        setLoading(false);
-      } catch (e) {
-        console.error("Failed to fetch writer profile:", e);
-        setLoading(false);
-      }
-    };
-    fetchWriter();
-  }, [user]);
 
   useEffect(() => {
     const fetchContentCount = async () => {
@@ -79,11 +61,11 @@ const WriterProfile = () => {
           animate={{ opacity: 1, y: 0 }}
           className="bg-card rounded-2xl border border-border shadow-lg p-8 mb-8 relative overflow-hidden"
         >
-          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-full blur-3xl -z-10" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-linear-to-br from-primary/5 to-secondary/5 rounded-full blur-3xl -z-10" />
 
           <div className="flex flex-col md:flex-row items-start gap-8">
-            <div className="relative flex-shrink-0">
-              <div className="w-32 h-32 rounded-2xl ring-4 ring-background shadow-xl overflow-hidden bg-gradient-to-br from-primary/10 to-secondary/10">
+            <div className="relative shrink-0">
+              <div className="w-32 h-32 rounded-2xl ring-4 ring-background shadow-xl overflow-hidden bg-linear-to-br from-primary/10 to-secondary/10">
                 <img
                   src={
                     writer?.avatar ||
@@ -198,7 +180,7 @@ const WriterProfile = () => {
           ))}
         </div>
 
-        <div className="min-h-[400px]">
+        <div className="min-h-100">
           {tab === 1 ? (
             <Suspense
               fallback={
@@ -251,7 +233,7 @@ const WriterProfile = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="bg-gradient-to-br from-accent/5 to-primary/5 border border-border rounded-2xl p-6 hover:shadow-lg transition-shadow"
+                className="bg-linear-to-br from-accent/5 to-primary/5 border border-border rounded-2xl p-6 hover:shadow-lg transition-shadow"
               >
                 <h4 className="text-sm font-bold text-foreground/40 uppercase tracking-wider mb-4 flex items-center gap-2">
                   <Award size={16} /> Achievements

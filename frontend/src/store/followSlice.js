@@ -17,8 +17,6 @@ const followSlice = createSlice({
       } else {
         state.following.push(writerId);
       }
-      
-      localStorage.setItem('following', JSON.stringify(state.following));
     },
     
     clearFollowing: (state) => {

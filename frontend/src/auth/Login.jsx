@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -6,32 +7,28 @@ import { Mail, Lock, Eye, EyeOff, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import api from '../util/api';
 
+import { useAuthForm } from '../hooks/useAuthForm';
+
 export default function Login() {
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const successMessage = location.state?.message;
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-    try {
+  const { formData, error, loading, handleChange, handleSubmit } = useAuthForm(
+    { email: '', password: '' },
+    async (formData) => {
       await api.post('/user/login', formData);
       const userData = await dispatch(fetchUser()).unwrap();
-      navigate(userData.accountType === 'reader' ? '/reader' : userData.accountType === 'creator' ? '/creator' : '/');
-    } catch (err) {
-      setError('Invalid credentials');
-      setLoading(false);
+      navigate(
+        userData.accountType === 'reader' ? '/reader' :
+        userData.accountType === 'creator' ? '/creator' : '/'
+      );
     }
-  };
+  );
 
   return (
    
@@ -41,7 +38,7 @@ export default function Login() {
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         
-        className="flex flex-col md:flex-row w-full max-w-4xl min-h-[500px] md:h-[min(600px,70vh)] rounded-3xl overflow-hidden shadow-2xl border border-border bg-card"
+        className="flex flex-col md:flex-row w-full max-w-4xl min-h-125 md:h-[min(600px,70vh)] rounded-3xl overflow-hidden shadow-2xl border border-border bg-card"
       >
         
         
@@ -54,7 +51,7 @@ export default function Login() {
           <h1 className="text-4xl md:text-5xl font-black tracking-tighter mb-3 leading-none uppercase">Log<br/>In</h1>
           <div className="w-10 h-1 bg-foreground mb-6" />
           
-          <p className="text-[13px] font-light opacity-80 leading-relaxed max-w-[200px]">
+          <p className="text-[13px] font-light opacity-80 leading-relaxed max-w-50">
             Welcome back. Continue your unfiltered journey.
           </p>
 
@@ -73,7 +70,7 @@ export default function Login() {
             <button className="px-4 py-1 rounded-full text-[8px] font-bold tracking-widest bg-primary text-foreground">LOGIN</button>
           </div>
 
-          <div className="flex-grow flex flex-col justify-center">
+          <div className="grow flex flex-col justify-center">
             <form onSubmit={handleSubmit} className="space-y-6 max-w-sm w-full mx-auto md:mx-0">
               {error && <p className="text-primary text-[9px] font-bold uppercase tracking-widest">{error}</p>}
               {successMessage && <p className="text-secondary text-[9px] font-bold uppercase tracking-widest">{successMessage}</p>}

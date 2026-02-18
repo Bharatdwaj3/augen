@@ -1,24 +1,8 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setCategory } from '../store/contentSlice';
-
-const CATEGORIES = [
-  { value: 'all', label: 'All Stories' },
-  { value: 'fiction', label: 'Fiction'},
-  { value: 'science', label: 'Science' },
-  { value: 'art', label: 'Art'},
-  { value: 'daily', label: 'Daily'},
-  { value: 'history', label: 'History'},
-];
+import { useCategoryFilter } from '../hooks/useCategoryFilter';
 
 export default function CategoryFilter() {
-  const dispatch = useDispatch();
-  const selectedCategory = useSelector((state) => state.content.selectedCategory);
-
-  const handleCategoryClick = (category) => {
-    dispatch(setCategory(category));
-  };
-
+const {selectedCategory, handleCategoryClick, CATEGORIES}=useCategoryFilter();
   return (
     <div 
       className="glass-strong rounded-2xl mb-8 sticky top-20 z-10 animate-fade-in"
@@ -42,7 +26,6 @@ export default function CategoryFilter() {
             `}
             style={{ animationDelay: `${idx * 100}ms` }}
           >
-            <span className="text-xl">{cat.emoji}</span>
             <span>{cat.label}</span>
           </button>
         ))}

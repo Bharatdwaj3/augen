@@ -1,65 +1,25 @@
 /* eslint-disable no-unused-vars */
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Save, Loader2, Type, Image, AlignLeft } from "lucide-react";
-import { useEditor, EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import api from "../util/api";
-import { useSelector } from "react-redux";
+import { EditorContent } from "@tiptap/react";
 
+import { useNewStory } from "../hooks/useNewStory";
 
 
 export default function NewStory() {
-  const navigate = useNavigate();
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("history");
-  const [saving, setSaving] = useState(false);
-const { user } = useSelector((state) => state.avatar);
-  const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        heading: { levels: [1, 2, 3] },
-        bulletList: true,
-        orderedList: true,
-      }),
-    ],
-    content: "<p>Start writing your story here...</p>",
-    editorProps: {
-      attributes: {
-        class:
-          "prose prose-lg max-w-none focus:outline-none min-h-[500px] p-8 text-foreground",
-      },
-    },
-  });
-
-  const handlePublish = async (e) => {
-    e.preventDefault();
-
-    if (!title.trim() || !editor?.getText().trim()) {
-      alert("Title and content are required");
-      return;
-    }
-
-    setSaving(true);
-
-    try {
-      await api.post("/content", {
-        title: title,
-        description: editor.getHTML(),
-        category: category,
-        mediaType: "text",
-      });
-
-      alert("Story published!");
-      navigate("/writer");
-    } catch (err) {
-      console.error(err);
-      alert("Failed to publish story");
-    } finally {
-      setSaving(false);
-    }
-  };
+const {
+    user,
+    editor,
+    title,
+    setTitle,
+    category,
+    setCategory,
+    saving,
+    error,
+    isPublishDisabled,
+    handlePublish,
+    navigate,
+  } = useNewStory();
 
   if (!editor) {
     return (
@@ -93,9 +53,9 @@ const { user } = useSelector((state) => state.avatar);
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={handlePublish}
-              disabled={saving || !title.trim() || !editor.getText().trim()}
+              disabled={isPublishDisabled}
               className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all shadow-lg ${
-                saving || !title.trim() || !editor.getText().trim()
+                isPublishDisabled
                   ? "bg-foreground/10 text-foreground/40 cursor-not-allowed shadow-none"
                   : "bg-primary text-white hover:bg-primary/90 shadow-primary/20"
               }`}
@@ -162,7 +122,7 @@ const { user } = useSelector((state) => state.avatar);
             </div>
 
             <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-lg">
-              <div className="md:hidden bg-foreground/[0.02] px-6 py-3 border-b border-border">
+              <div className="md:hidden bg-foreground/2 px-6 py-3 border-b border-border">
                 <p className="text-xs text-foreground/50">
                   Use keyboard shortcuts for formatting: Ctrl+B (bold), Ctrl+I
                   (italic)
@@ -183,9 +143,9 @@ const { user } = useSelector((state) => state.avatar);
               </button>
               <button
                 onClick={handlePublish}
-                disabled={saving || !title.trim() || !editor.getText().trim()}
+                disabled={isPublishDisabled}
                 className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all ${
-                  saving || !title.trim() || !editor.getText().trim()
+                  isPublishDisabled
                     ? "bg-foreground/10 text-foreground/40 cursor-not-allowed"
                     : "bg-primary text-white hover:bg-primary/90"
                 }`}
@@ -202,9 +162,7 @@ const { user } = useSelector((state) => state.avatar);
               </h3>
               <ul className="space-y-2 text-sm text-foreground/70">
                 <li>• Write a compelling title that captures attention</li>
-                <li>
-                  • Choose the most relevant category for better discoverability
-                </li>
+                <li>• Choose the most relevant category for better discoverability</li>
                 <li>• Use headings to structure your content</li>
                 <li>• Keep paragraphs short and readable</li>
                 <li>• Proofread before publishing</li>

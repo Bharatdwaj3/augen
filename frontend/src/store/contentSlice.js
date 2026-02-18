@@ -29,13 +29,11 @@ const contentSlice = createSlice({
       
       if (!state.visitedArticles.includes(contentId)) {
         state.visitedArticles.unshift(contentId);
-        localStorage.setItem('visitedArticles', JSON.stringify(state.visitedArticles));
       }
     },
 
     clearHistory: (state) => {
       state.visitedArticles = [];
-      localStorage.removeItem('visitedArticles');
     },
 
     setCategory: (state, action) => {
@@ -48,7 +46,6 @@ const contentSlice = createSlice({
     
     clearBookmarks: (state) => {
       state.bookmarks = [];
-      localStorage.removeItem('bookmarks');
     },
   },
 });

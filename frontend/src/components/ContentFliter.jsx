@@ -1,86 +1,45 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setCategory } from '../store/contentSlice';
-import { Box, Chip } from '@mui/material';
-import { 
-  AllInclusive, 
-  AutoStories, 
-  Science, 
-  Palette, 
-  Today, 
-  History 
-} from '@mui/icons-material';
+import {
+  // eslint-disable-next-line no-shadow-restricted-names
+  Infinity, BookOpen, FlaskConical, Palette, Sun, Clock,
+} from 'lucide-react';
 
-const CATEGORIES = [
-  { value: 'all', label: 'All Stories', icon: <AllInclusive /> },
-  { value: 'fiction', label: 'Fiction', icon: <AutoStories /> },
-  { value: 'science', label: 'Science', icon: <Science /> },
-  { value: 'art', label: 'Art', icon: <Palette /> },
-  { value: 'daily', label: 'Daily', icon: <Today /> },
-  { value: 'history', label: 'History', icon: <History /> },
-];
+import { useCategoryFilter } from '../hooks/useCategoryFilter';
 
-export default function CategoryFilter() {
-  const dispatch = useDispatch();
-  const selectedCategory = useSelector((state) => state.content.selectedCategory);
+const CATEGORY_ICONS = {
+  all:     <Infinity size={16} />,
+  fiction: <BookOpen size={16} />,
+  science: <FlaskConical size={16} />,
+  art:     <Palette size={16} />,
+  daily:   <Sun size={16} />,
+  history: <Clock size={16} />,
+};
 
-  const handleCategoryClick = (category) => {
-    dispatch(setCategory(category));
-  };
+export default function ContentFilter() {
+  const { selectedCategory, handleCategoryClick, CATEGORIES } = useCategoryFilter();
 
   return (
-    <Box 
-      className="glass-strong"
-      sx={{ 
-        padding: '24px 40px',
-        borderRadius: '16px',
-        marginBottom: '32px',
-        position: 'sticky',
-        top: '80px',
-        zIndex: 10,
-      }}
-    >
-      <Box sx={{ 
-        display: 'flex', 
-        gap: 2, 
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}>
+    <div className="glass-strong rounded-2xl mb-8 sticky top-20 z-10 px-10 py-6">
+      <div className="flex gap-3 flex-wrap justify-center items-center">
         {CATEGORIES.map((cat) => (
-          <Chip
+          <button
             key={cat.value}
-            icon={cat.icon}
-            label={cat.label}
             onClick={() => handleCategoryClick(cat.value)}
-            sx={{
-              fontSize: '0.95rem',
-              padding: '24px 12px',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              backgroundColor: selectedCategory === cat.value 
-                ? 'var(--color-primary)' 
-                : 'var(--color-secondary)',
-              color: selectedCategory === cat.value 
-                ? 'var(--color-primary-foreground)' 
-                : 'var(--color-foreground)',
-              border: selectedCategory === cat.value 
-                ? '2px solid var(--color-primary)' 
-                : '1px solid var(--color-border)',
-              '&:hover': {
-                backgroundColor: selectedCategory === cat.value 
-                  ? 'var(--color-primary)' 
-                  : 'var(--color-muted)',
-                transform: 'translateY(-2px)',
-                boxShadow: '0 8px 20px rgba(32, 178, 166, 0.2)',
-              },
-              '& .MuiChip-icon': {
-                color: 'inherit',
-              },
-            }}
-          />
+            className={`
+              flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold
+              border transition-all duration-300
+              hover:-translate-y-0.5 hover:shadow-lg
+              ${selectedCategory === cat.value
+                ? 'bg-primary text-primary-foreground border-primary'
+                : 'bg-secondary text-foreground border-border hover:bg-muted hover:border-primary/30'
+              }
+            `}
+          >
+            {CATEGORY_ICONS[cat.value]}
+            <span>{cat.label}</span>
+          </button>
         ))}
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 }

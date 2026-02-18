@@ -1,32 +1,26 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import ContentGrid from "../features/content/ContentGrid";
 import { Filter, TrendingUp, Clock, Star } from "lucide-react";
 
+import { useExplore } from "../hooks/useExplore";
+
 export default function Explore() {
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedFilter, setSelectedFilter] = useState('recent');
-
-  const categories = [
-    { id: 'all', label: 'All Stories' },
-    { id: 'fiction', label: 'Fiction' },
-    { id: 'technology', label: 'Technology' },
-    { id: 'lifestyle', label: 'Lifestyle' },
-    { id: 'business', label: 'Business' },
-    { id: 'science', label: 'Science' },
-     { id: 'history', label: 'history' }
-  ];
-
-  const filters = [
-    { id: 'recent', label: 'Recent', icon: Clock },
-    { id: 'trending', label: 'Trending', icon: TrendingUp },
-    { id: 'featured', label: 'Featured', icon: Star },
-  ];
+  const {
+    selectedCategory,
+    setSelectedCategory,
+    selectedFilter,
+    setSelectedFilter,
+    categoryFilter,
+    categories,
+    filters,
+  } = useExplore();
 
   return (
     <main className="min-h-screen bg-background text-foreground">
       <div className="pt-24 pb-16">
-        <div className="max-w-[1400px] mx-auto px-6 mb-8">
+        <div className="max-w-350 mx-auto px-6 mb-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -40,10 +34,10 @@ export default function Explore() {
           </motion.div>
         </div>
 
-        <div className="max-w-[1400px] mx-auto px-6 mb-8">
+        <div className="max-w-350 mx-auto px-6 mb-8">
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-3 overflow-x-auto pb-2">
-              <div className="flex items-center gap-2 text-sm font-semibold text-foreground/50 flex-shrink-0">
+              <div className="flex items-center gap-2 text-sm font-semibold text-foreground/50 shrink-0">
                 <Filter size={16} />
                 <span>Sort by:</span>
               </div>
@@ -87,7 +81,7 @@ export default function Explore() {
         <div className="px-6">
           <ContentGrid 
             limit={20} 
-            categoryFilter={selectedCategory === 'all' ? null : selectedCategory}
+            categoryFilter={categoryFilter}
           />
         </div>
       </div>
