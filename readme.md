@@ -19,12 +19,6 @@
 
 ---
 
-## Overview
-
-**Augen: The Media Site** is a sophisticated, automated README generation platform designed to bridge the gap between complex software development and professional documentation. By leveraging a high-performance web interface and a robust backend architecture, Augen empowers developers to transform raw GitHub repositories into comprehensive, visually stunning documentation assets in a matter of seconds.
-
-> Documentation is the lifeblood of open-source and professional software development, yet it remains one of the most time-consuming and neglected aspects of the lifecycle. Developers often struggle to maintain consistency, professional formatting, and thoroughness across multiple projects. This leads to reduced adoption, confusion among contributors, and significant technical debt in the form of "knowledge silos."
-
 **Augen** provides the solution by offering a centralized, intelligent media platform where documentation isn't just written—it's managed. Through a component-based React architecture and an Express-powered REST API, the platform allows users to analyze codebases, categorize documentation features, and maintain professional profiles for both content creators (Writers) and documentation consumers (Readers).
 
 ### Architecture Overview
