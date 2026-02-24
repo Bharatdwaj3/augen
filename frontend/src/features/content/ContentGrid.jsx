@@ -13,8 +13,9 @@ export default function ContentGrid({ limit = 20, categoryFilter = null }) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
-    axios.get('http://localhost:5001/api/content', { withCredentials: true })
+    axios.get('/api/content', { withCredentials: true })
       .then((res) => {
         let data = res.data;
         if (categoryFilter && categoryFilter !== 'all') {

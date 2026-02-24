@@ -1,7 +1,6 @@
 import {Navigate} from "react-router-dom";
 import { useSelector } from 'react-redux';
 
-//403 Error redirection
 
 const ProtectedRoute=({children})=>{
     const {user}=useSelector((state)=>state.auth);
