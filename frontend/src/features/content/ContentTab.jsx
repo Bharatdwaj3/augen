@@ -14,7 +14,7 @@ const ContentTab = ({user, writer}) => {
 
   const fetchContent = async () => {
     try {
-      const res = await axios.get("http://localhost:5001/api/content", { withCredentials: true });
+      const res = await axios.get("/api/content", { withCredentials: true });
       const currentUser = writer || user;
       const userContent = res.data.filter(item => 
         item?.userId?._id === currentUser?.id || item?.userId?._id === currentUser?._id
