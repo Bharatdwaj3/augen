@@ -16,7 +16,7 @@ const ContentTab = ({user, writer}) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchContent = async () => {
     try {
-      const res = await api.get("/api/content", { withCredentials: true });
+      const res = await api.get("/content", { withCredentials: true });
       const currentUser = writer || user;
       const userContent = res.data.filter(item => 
         item?.userId?._id === currentUser?.id || item?.userId?._id === currentUser?._id

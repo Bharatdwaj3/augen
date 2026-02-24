@@ -16,7 +16,7 @@ export default function ContentGrid({ limit = 20, categoryFilter = null }) {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
-    api.get('/api/content', { withCredentials: true })
+    api.get('/content', { withCredentials: true })
       .then((res) => {
         let data = res.data;
         if (categoryFilter && categoryFilter !== 'all') {
