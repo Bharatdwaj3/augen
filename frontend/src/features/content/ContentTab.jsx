@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Edit, Trash2, Search, X, MoreVertical, Eye, TrendingUp } from "lucide-react";
+import api from '../../util/api';
 
 const ContentTab = ({user, writer}) => {
   const [contents, setContents] = useState([]);
@@ -12,9 +13,10 @@ const ContentTab = ({user, writer}) => {
 
     
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchContent = async () => {
     try {
-      const res = await axios.get("/api/content", { withCredentials: true });
+      const res = await api.get("/api/content", { withCredentials: true });
       const currentUser = writer || user;
       const userContent = res.data.filter(item => 
         item?.userId?._id === currentUser?.id || item?.userId?._id === currentUser?._id

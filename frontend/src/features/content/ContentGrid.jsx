@@ -6,6 +6,7 @@ import axios from 'axios';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { User, Clock, Tag, ArrowRight, Image as ImageIcon } from 'lucide-react';
+import api from '../../util/api';
 
 export default function ContentGrid({ limit = 20, categoryFilter = null }) {
   const [contents, setContents] = useState([]);
@@ -15,7 +16,7 @@ export default function ContentGrid({ limit = 20, categoryFilter = null }) {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
-    axios.get('/api/content', { withCredentials: true })
+    api.get('/api/content', { withCredentials: true })
       .then((res) => {
         let data = res.data;
         if (categoryFilter && categoryFilter !== 'all') {
@@ -48,11 +49,11 @@ export default function ContentGrid({ limit = 20, categoryFilter = null }) {
   };
 
   if (loading) return (
-    <div className="w-full max-w-[1400px] mx-auto">
+    <div className="w-full max-w-350 mx-auto">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {[...Array(8)].map((_, i) => (
-          <div key={i} className="content-card h-[400px] animate-pulse">
-            <div className="aspect-[16/10] bg-foreground/5 rounded-t-xl" />
+          <div key={i} className="content-card h-100 animate-pulse">
+            <div className="aspect-16/10 bg-foreground/5 rounded-t-xl" />
             <div className="p-5 space-y-3">
               <div className="h-3 bg-foreground/5 rounded w-1/3" />
               <div className="h-6 bg-foreground/5 rounded w-full" />
