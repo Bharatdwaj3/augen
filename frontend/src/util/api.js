@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-const API_URL = window.location.hostname === 'localhost' 
-  ? 'http://localhost:5001' 
-  : 'https://augen-server.onrender.com';
+const API_URL = import.meta.env.VITE_API_URL || 
+                (import.meta.env.DEV ? 'http://localhost:5001' : '');
+                
 const api = axios.create({
   baseURL: `${API_URL}/api`,
   withCredentials: true,
